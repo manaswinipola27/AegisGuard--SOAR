@@ -32,13 +32,15 @@ else:
 
 # ── Database ───────────────────────────────────────────────────────
 
-def get_db():
+_db_initialized = False
+
+def _connect_db():
     conn = sqlite3.connect(DB_PATH, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
 def init_db():
-    conn = get_db()
+    conn = _connect_db()
     cur = conn.cursor()
     cur.executescript("""
         CREATE TABLE IF NOT EXISTS alerts (
@@ -100,6 +102,20 @@ def init_db():
     cur.execute("INSERT OR IGNORE INTO notification_settings VALUES ('notify_critical_only', 'true')")
     conn.commit()
     conn.close()
+
+def ensure_db_initialized():
+    global _db_initialized
+    if not _db_initialized:
+        _db_initialized = True
+        try:
+            init_db()
+            seed_alerts(15)
+        except Exception as e:
+            print(f"[db_init_error] {e}")
+
+def get_db():
+    ensure_db_initialized()
+    return _connect_db()
 
 # ── Mock Data ──────────────────────────────────────────────────────
 
