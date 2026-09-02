@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AegisGuard AI | Autonomous SOC & SOAR Platform</title>
+  <meta name="description" content="AegisGuard AI — Autonomous SOC Alert Triage and Automated Incident Response Platform." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════════════════════
+       LOGIN PAGE — shown first, hides when authenticated
+  ════════════════════════════════════════════════════════════ -->
+  <div id="page-login">
+    <div class="login-bg-grid"></div>
+    <div class="login-card">
+      <div class="login-logo">
+        <span class="login-shield">🛡</span>
+        <div>
+          <div class="login-product-name">AegisGuard AI</div>
+          <div class="login-product-sub">Autonomous SOC & SOAR Platform</div>
+        </div>
+      </div>
+
+      <div class="login-divider"></div>
+
+      <form id="login-form" onsubmit="handleLogin(event)" autocomplete="off">
+        <div class="login-field">
+          <label for="login-username">Analyst Email</label>
+          <input
+            type="text"
+            id="login-username"
+            name="username"
+            placeholder="analyst@aegisguard.io"
+            autocomplete="off"
+            required
+          />
+        </div>
+        <div class="login-field">
+          <label for="login-password">Password</label>
+          <div class="password-wrap">
+            <input
+              type="password"
+              id="login-password"
+              name="password"
+              placeholder="••••••••"
+              autocomplete="off"
+              required
+            />
+            <button type="button" class="toggle-pw" onclick="togglePassword()" title="Show/hide password">👁</button>
+          </div>
+        </div>
+        <div id="login-error" class="login-error"></div>
+        <button type="submit" id="login-btn" class="login-submit-btn">
+          <span id="login-btn-text">Sign In to Dashboard</span>
+        </button>
+      </form>
+
+      <div class="login-demo-box">
+        <span class="demo-label">Demo Access</span>
+        <div class="demo-creds">
+          <div><span>Email:</span> <code>analyst@aegisguard.io</code></div>
+          <div><span>Pass:</span> <code>admin</code></div>
+        </div>
+      </div>
+
+      <div class="login-footer-note">
+        🔒 Secured with session-based access control
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       MAIN APPLICATION — hidden until authenticated
+  ════════════════════════════════════════════════════════════ -->
+  <div id="page-app" class="app-hidden">
+
+    <!-- ── Sidebar ──────────────────────────────────────────────── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <span class="sidebar-shield">🛡</span>
+          <div>
+            <div class="sidebar-brand">AegisGuard</div>
+            <div class="sidebar-brand-sub">Autonomous SOC</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Operations</div>
+        <a href="#" class="nav-item active" id="nav-dashboard" onclick="showView('dashboard')">
+          <span class="nav-icon">⊞</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-alerts" onclick="showView('alerts')">
+          <span class="nav-icon">⚠</span>
+          <span class="nav-label">Alert Feed</span>
+          <span class="nav-badge" id="nav-badge-new"></span>
+        </a>
+        <a href="#" class="nav-item" id="nav-playbooks" onclick="showView('playbooks')">
+          <span class="nav-icon">▶</span>
+          <span class="nav-label">Playbooks</span>
+        </a>
+
+        <div class="nav-section-label">Administration</div>
+        <a href="#" class="nav-item" id="nav-audit" onclick="showView('audit')">
+          <span class="nav-icon">≡</span>
+          <span class="nav-label">Audit Log</span>
+        </a>
+        <a href="#" class="nav-item" id="nav-notifications" onclick="showView('notifications')">
+          <span class="nav-icon">🔔</span>
+          <span class="nav-label">Notifications</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-user-card">
+        <span class="sidebar-user-avatar" id="sidebar-avatar">AM</span>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebar-user-name">Alex Morgan</div>
+          <div class="sidebar-user-role" id="sidebar-user-role">Lead SOC Analyst</div>
+        </div>
+        <button class="sidebar-logout-btn" onclick="handleLogout()" title="Sign Out">⏻</button>
+      </div>
+    </aside>
+
+    <!-- ── Main Content ─────────────────────────────────────────── -->
+    <div class="app-main">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-page-info">
+            <span class="topbar-page-title" id="topbar-title">Dashboard</span>
+            <span class="topbar-separator">›</span>
+            <span class="topbar-breadcrumb" id="topbar-breadcrumb">Overview</span>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-status-chip">
+            <span class="status-dot-live"></span>
+            <span>Live</span>
+          </div>
+          <div class="topbar-time-chip" id="topbar-time">--:--:-- UTC</div>
+          <button class="topbar-btn" onclick="simulateAlert()" title="Simulate incoming webhook alert">
+            <span>⊕</span> Simulate Alert
+          </button>
+        </div>
+      </header>
+
+      <!-- Views Container -->
+      <div class="views-container">
+
+        <!-- ── Dashboard View ──────────────────────────────────── -->
+        <section class="view active" id="view-dashboard">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Security Operations Overview</h1>
+              <p class="view-subtitle">Real-time threat intelligence and incident status</p>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="action-chip" onclick="loadDashboard()">↺ Refresh</button>
+            </div>
+          </div>
+
+          <!-- Stat Cards -->
+          <div class="stat-row" id="stat-grid">
+            <div class="stat-card">
+              <div class="stat-icon neutral">⊠</div>
+              <div class="stat-body">
+                <div class="stat-num" id="stat-total">—</div>
+                <div class="stat-lbl">Total Alerts</div>
+              </div>
+            </div>
+            <div class="stat-card danger">
+              <div class="stat-icon">🔴</div>
+              <div class="stat-body">
+                <div class="stat-num" id="stat-critical">—</div>
+                <div class="stat-lbl">Critical</div>
+              </div>
+            </div>
+            <div class="stat-card warn">
+              <div class="stat-icon">🟠</div>
+              <div class="stat-body">
+                <div class="stat-num" id="stat-high">—</div>
+                <div class="stat-lbl">High Severity</div>
+              </div>
+            </div>
+            <div class="stat-card info">
+              <div class="stat-icon">🔵</div>
+              <div class="stat-body">
+                <div class="stat-num" id="stat-new">—</div>
+                <div class="stat-lbl">New / Unhandled</div>
+              </div>
+            </div>
+            <div class="stat-card success">
+              <div class="stat-icon">🟢</div>
+              <div class="stat-body">
+                <div class="stat-num" id="stat-resolved">—</div>
+                <div class="stat-lbl">Resolved</div>
+              </div>
+            </div>
+            <div class="stat-card accent">
+              <div class="stat-icon">⚡</div>
+              <div class="stat-body">
+                <div class="stat-num" id="stat-actions">—</div>
+                <div class="stat-lbl">Actions Taken</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Alerts Table -->
+          <div class="panel-card">
+            <div class="panel-card-header">
+              <div class="panel-card-title">
+                <span class="panel-card-icon">◈</span>
+                Recent Alerts
+              </div>
+              <button class="action-chip" onclick="showView('alerts')">View All →</button>
+            </div>
+            <div class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Alert ID</th>
+                    <th>Timestamp</th>
+                    <th>Source</th>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Risk</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboard-tbody">
+                  <tr><td colspan="7" class="empty-cell">Loading alerts…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Alert Feed View ─────────────────────────────────── -->
+        <section class="view" id="view-alerts">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Alert Feed</h1>
+              <p class="view-subtitle">All security events — filter, sort, and investigate</p>
+            </div>
+          </div>
+
+          <div class="filter-bar">
+            <div class="filter-item">
+              <label>Severity</label>
+              <select id="filter-severity" onchange="loadAlerts()">
+                <option value="All">All Severities</option>
+                <option value="Critical">Critical</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label>Source</label>
+              <select id="filter-source" onchange="loadAlerts()">
+                <option value="All">All Sources</option>
+                <option value="CrowdStrike">CrowdStrike</option>
+                <option value="SentinelOne">SentinelOne</option>
+                <option value="Okta">Okta</option>
+                <option value="Palo Alto">Palo Alto</option>
+                <option value="Splunk">Splunk</option>
+                <option value="Darktrace">Darktrace</option>
+                <option value="Microsoft Defender">Microsoft Defender</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label>Status</label>
+              <select id="filter-status" onchange="loadAlerts()">
+                <option value="All">All Statuses</option>
+                <option value="New">New</option>
+                <option value="Triage in Progress">Triage in Progress</option>
+                <option value="Automated Action Taken">Action Taken</option>
+                <option value="Resolved">Resolved</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label>Sort By</label>
+              <select id="sort-by" onchange="loadAlerts()">
+                <option value="created_at">Newest First</option>
+                <option value="severity">Severity</option>
+                <option value="risk_score">Risk Score</option>
+                <option value="status">Status</option>
+              </select>
+            </div>
+            <button class="action-chip" onclick="loadAlerts()">↺ Refresh</button>
+          </div>
+
+          <div class="panel-card no-header-pad">
+            <div class="table-scroll">
+              <table class="data-table" id="alerts-table">
+                <thead>
+                  <tr>
+                    <th>Alert ID</th>
+                    <th>Timestamp</th>
+                    <th>Source</th>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Risk</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="alerts-tbody">
+                  <tr><td colspan="8" class="empty-cell">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="alerts-loading" class="table-loading" style="display:none">Loading alerts…</div>
+          </div>
+        </section>
+
+        <!-- ── Playbooks View ──────────────────────────────────── -->
+        <section class="view" id="view-playbooks">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">SOAR Playbooks</h1>
+              <p class="view-subtitle">Automated response workflow viewer</p>
+            </div>
+          </div>
+          <div class="panel-card" id="playbook-empty-card">
+            <div class="empty-state">
+              <div class="empty-state-icon">▶</div>
+              <div class="empty-state-title">No Alert Selected</div>
+              <p class="empty-state-text">Open an alert from the Alert Feed and click a playbook step to view automated response workflows here.</p>
+              <button class="action-chip" onclick="showView('alerts')">Browse Alert Feed →</button>
+            </div>
+          </div>
+          <div id="playbook-content" style="display:none"></div>
+        </section>
+
+        <!-- ── Audit Log View ──────────────────────────────────── -->
+        <section class="view" id="view-audit">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Audit Trail</h1>
+              <p class="view-subtitle">Immutable log of all analyst and AI engine actions</p>
+            </div>
+            <span class="counter-badge" id="audit-count"></span>
+          </div>
+
+          <div class="panel-card no-header-pad">
+            <div class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp (UTC)</th>
+                    <th>Alert ID</th>
+                    <th>Action</th>
+                    <th>Actor</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody id="audit-tbody">
+                  <tr><td colspan="5" class="empty-cell">Loading audit log…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Notifications View ──────────────────────────────── -->
+        <section class="view" id="view-notifications">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Notification Channels</h1>
+              <p class="view-subtitle">Configure Slack & Email alert dispatching for Critical incidents</p>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button class="action-chip" onclick="sendTestNotification()">🔔 Send Test</button>
+              <button class="action-chip primary" onclick="saveNotificationSettings()">💾 Save Settings</button>
+            </div>
+          </div>
+
+          <div class="two-col-grid">
+            <div class="panel-card">
+              <div class="panel-card-header">
+                <div class="panel-card-title"><span class="panel-card-icon">💬</span> Slack Integration</div>
+              </div>
+              <div class="panel-card-body">
+                <div class="field-group">
+                  <label>Slack Channel</label>
+                  <input type="text" id="cfg-slack-channel" class="field-input" placeholder="#soc-critical-alerts" />
+                </div>
+                <div class="field-group">
+                  <label>Incoming Webhook URL</label>
+                  <input type="text" id="cfg-slack-webhook" class="field-input" placeholder="https://hooks.slack.com/services/..." />
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-card-header">
+                <div class="panel-card-title"><span class="panel-card-icon">✉️</span> Email Dispatcher</div>
+              </div>
+              <div class="panel-card-body">
+                <div class="field-group">
+                  <label>On-Call Email Address</label>
+                  <input type="email" id="cfg-email-recipient" class="field-input" placeholder="soc-oncall@enterprise.com" />
+                </div>
+                <div class="field-group">
+                  <label>Dispatch Trigger</label>
+                  <select id="cfg-notify-critical" class="field-input">
+                    <option value="true">Critical Alerts Only</option>
+                    <option value="false">All Alerts (Critical + High)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card no-header-pad" style="margin-top:20px">
+            <div class="panel-card-header">
+              <div class="panel-card-title"><span class="panel-card-icon">📋</span> Dispatch History</div>
+              <span class="counter-badge" id="notif-count"></span>
+            </div>
+            <div class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Channel</th>
+                    <th>Recipient</th>
+                    <th>Alert ID</th>
+                    <th>Status</th>
+                    <th>Preview</th>
+                  </tr>
+                </thead>
+                <tbody id="notifications-tbody">
+                  <tr><td colspan="6" class="empty-cell">No notifications yet</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- end views-container -->
+    </div><!-- end app-main -->
+  </div><!-- end page-app -->
+
+  <!-- ── Alert Detail Drawer ─────────────────────────────────────── -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+  <aside class="drawer" id="alert-drawer">
+    <div class="drawer-header">
+      <div class="drawer-header-info">
+        <div class="drawer-alert-id" id="drawer-alert-id">—</div>
+        <div class="drawer-alert-title" id="drawer-alert-title">—</div>
+      </div>
+      <button class="drawer-close-btn" onclick="closeDrawer()">✕</button>
+    </div>
+    <div class="drawer-body">
+
+      <!-- AI Triage Panel -->
+      <div class="drawer-panel">
+        <div class="drawer-panel-head">
+          <span class="dpanel-icon ai">⬡</span>
+          <span class="dpanel-title">AI Triage Analysis</span>
+          <span id="drawer-severity" class="sev-badge"></span>
+        </div>
+        <div class="ai-triage-grid">
+          <div class="ai-score-col">
+            <div class="ai-score-label">Risk Score</div>
+            <div class="ai-score-num" id="drawer-risk-score">—</div>
+            <div class="ai-score-track"><div class="ai-score-fill" id="drawer-risk-bar"></div></div>
+          </div>
+          <div class="ai-summary-col">
+            <div class="ai-score-label">Contextual Summary</div>
+            <p id="drawer-ai-summary" class="ai-summary-text">Loading…</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- IOCs Panel -->
+      <div class="drawer-panel">
+        <div class="drawer-panel-head">
+          <span class="dpanel-icon">◈</span>
+          <span class="dpanel-title">Extracted IOCs</span>
+        </div>
+        <div id="drawer-iocs" class="ioc-body"></div>
+      </div>
+
+      <!-- SOAR Playbook -->
+      <div class="drawer-panel">
+        <div class="drawer-panel-head">
+          <span class="dpanel-icon">▶</span>
+          <span class="dpanel-title">SOAR Playbook</span>
+          <span id="drawer-status-badge" class="status-badge"></span>
+        </div>
+        <div id="drawer-playbook-steps" class="playbook-steps-list"></div>
+        <div id="drawer-actions" class="playbook-actions-grid"></div>
+        <div class="resolve-strip">
+          <button class="resolve-btn" id="btn-resolve" onclick="resolveAlert()">✓ Mark Resolved</button>
+        </div>
+      </div>
+
+      <!-- Raw Log -->
+      <div class="drawer-panel">
+        <div class="drawer-panel-head">
+          <span class="dpanel-icon">≡</span>
+          <span class="dpanel-title">Raw Event Log</span>
+          <button class="action-chip small" onclick="copyRawLog()">Copy JSON</button>
+        </div>
+        <pre class="raw-log-block" id="drawer-raw-log"></pre>
+      </div>
+
+      <!-- Alert Audit Trail -->
+      <div class="drawer-panel">
+        <div class="drawer-panel-head">
+          <span class="dpanel-icon">≡</span>
+          <span class="dpanel-title">Incident Audit Trail</span>
+        </div>
+        <div id="drawer-audit" class="drawer-audit-list"></div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ── Toast ──────────────────────────────────────────────────── -->
+  <div class="toast-container">
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
