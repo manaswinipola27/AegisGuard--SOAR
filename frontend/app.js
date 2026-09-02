@@ -1,6 +1,8 @@
-const API = (window.location.origin.includes("127.0.0.1:8000") || window.location.origin.includes("localhost:8000"))
-  ? "http://127.0.0.1:8000"
-  : window.location.origin;
+const isLocal = window.location.protocol === "file:" || 
+                window.location.hostname === "localhost" || 
+                window.location.hostname === "127.0.0.1" || 
+                window.location.hostname === "";
+const API = isLocal ? "http://127.0.0.1:8000" : window.location.origin;
 let currentAlertId=null;
 let currentUser=null;
 
