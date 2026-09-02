@@ -381,7 +381,8 @@ class LoginRequest(BaseModel):
 def startup():
     init_db()
     seed_alerts(15)
-    threading.Thread(target=alert_simulator, daemon=True).start()
+    if not os.environ.get("VERCEL"):
+        threading.Thread(target=alert_simulator, daemon=True).start()
 
 # ── Routes ─────────────────────────────────────────────────────────
 
