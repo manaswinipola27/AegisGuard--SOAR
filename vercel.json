@@ -1,31 +1,20 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "backend/main.py",
-      "use": "@vercel/python"
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
     },
     {
-      "src": "frontend/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "backend/main.py"
+      "source": "/style.css",
+      "destination": "/frontend/style.css"
     },
     {
-      "src": "/style.css",
-      "dest": "frontend/style.css"
+      "source": "/app.js",
+      "destination": "/frontend/app.js"
     },
     {
-      "src": "/app.js",
-      "dest": "frontend/app.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/index.html"
+      "source": "/(.*)",
+      "destination": "/frontend/index.html"
     }
   ]
 }
