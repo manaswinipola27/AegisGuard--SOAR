@@ -25,7 +25,10 @@ app.add_middleware(
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend")
-DB_PATH = os.path.join(BASE_DIR, "soc.db")
+if os.environ.get("VERCEL"):
+    DB_PATH = "/tmp/soc.db"
+else:
+    DB_PATH = os.path.join(BASE_DIR, "soc.db")
 
 # ── Database ───────────────────────────────────────────────────────
 
