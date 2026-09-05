@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AegisGuard AI | Autonomous SOC & SOAR Platform</title>
-  <meta name="description" content="AegisGuard AI — Autonomous SOC Alert Triage and Automated Incident Response Platform." />
+  <meta name="description"
+    content="AegisGuard AI — Autonomous SOC Alert Triage and Automated Incident Response Platform." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
   <!-- ════════════════════════════════════════════════════════════
@@ -30,26 +35,14 @@
       <form id="login-form" onsubmit="handleLogin(event)" autocomplete="off">
         <div class="login-field">
           <label for="login-username">Analyst Email</label>
-          <input
-            type="text"
-            id="login-username"
-            name="username"
-            placeholder="analyst@aegisguard.io"
-            autocomplete="off"
-            required
-          />
+          <input type="text" id="login-username" name="username" placeholder="analyst@aegisguard.io" autocomplete="off"
+            required />
         </div>
         <div class="login-field">
           <label for="login-password">Password</label>
           <div class="password-wrap">
-            <input
-              type="password"
-              id="login-password"
-              name="password"
-              placeholder="••••••••"
-              autocomplete="off"
-              required
-            />
+            <input type="password" id="login-password" name="password" placeholder="••••••••" autocomplete="off"
+              required />
             <button type="button" class="toggle-pw" onclick="togglePassword()" title="Show/hide password">👁</button>
           </div>
         </div>
@@ -235,7 +228,9 @@
                   </tr>
                 </thead>
                 <tbody id="dashboard-tbody">
-                  <tr><td colspan="7" class="empty-cell">Loading alerts…</td></tr>
+                  <tr>
+                    <td colspan="7" class="empty-cell">Loading alerts…</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -313,7 +308,9 @@
                   </tr>
                 </thead>
                 <tbody id="alerts-tbody">
-                  <tr><td colspan="8" class="empty-cell">Loading…</td></tr>
+                  <tr>
+                    <td colspan="8" class="empty-cell">Loading…</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -333,7 +330,8 @@
             <div class="empty-state">
               <div class="empty-state-icon">▶</div>
               <div class="empty-state-title">No Alert Selected</div>
-              <p class="empty-state-text">Open an alert from the Alert Feed and click a playbook step to view automated response workflows here.</p>
+              <p class="empty-state-text">Open an alert from the Alert Feed and click a playbook step to view automated
+                response workflows here.</p>
               <button class="action-chip" onclick="showView('alerts')">Browse Alert Feed →</button>
             </div>
           </div>
@@ -363,7 +361,9 @@
                   </tr>
                 </thead>
                 <tbody id="audit-tbody">
-                  <tr><td colspan="5" class="empty-cell">Loading audit log…</td></tr>
+                  <tr>
+                    <td colspan="5" class="empty-cell">Loading audit log…</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -395,7 +395,8 @@
                 </div>
                 <div class="field-group">
                   <label>Incoming Webhook URL</label>
-                  <input type="text" id="cfg-slack-webhook" class="field-input" placeholder="https://hooks.slack.com/services/..." />
+                  <input type="text" id="cfg-slack-webhook" class="field-input"
+                    placeholder="https://hooks.slack.com/services/..." />
                 </div>
               </div>
             </div>
@@ -407,7 +408,8 @@
               <div class="panel-card-body">
                 <div class="field-group">
                   <label>On-Call Email Address</label>
-                  <input type="email" id="cfg-email-recipient" class="field-input" placeholder="soc-oncall@enterprise.com" />
+                  <input type="email" id="cfg-email-recipient" class="field-input"
+                    placeholder="soc-oncall@enterprise.com" />
                 </div>
                 <div class="field-group">
                   <label>Dispatch Trigger</label>
@@ -438,7 +440,9 @@
                   </tr>
                 </thead>
                 <tbody id="notifications-tbody">
-                  <tr><td colspan="6" class="empty-cell">No notifications yet</td></tr>
+                  <tr>
+                    <td colspan="6" class="empty-cell">No notifications yet</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -472,7 +476,9 @@
           <div class="ai-score-col">
             <div class="ai-score-label">Risk Score</div>
             <div class="ai-score-num" id="drawer-risk-score">—</div>
-            <div class="ai-score-track"><div class="ai-score-fill" id="drawer-risk-bar"></div></div>
+            <div class="ai-score-track">
+              <div class="ai-score-fill" id="drawer-risk-bar"></div>
+            </div>
           </div>
           <div class="ai-summary-col">
             <div class="ai-score-label">Contextual Summary</div>
@@ -532,5 +538,15 @@
   </div>
 
   <script src="app.js"></script>
+  <style>
+    .panel-card,
+    .table-scroll,
+    .triage-analysis,
+    div {
+      overflow-y: auto !important;
+      height: auto !important;
+    }
+  </style>
 </body>
+
 </html>
